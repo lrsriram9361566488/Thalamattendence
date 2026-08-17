@@ -2,1222 +2,847 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#070b14">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="Modern Thalam attendance tracker with date history, L/R status, reports and WhatsApp sharing">
 <title>Thalam Pro — Attendance Tracker</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root{
-    --bg:#070b14;
-    --panel:#0e1525;
-    --panel2:#121b2e;
-    --border:#24304a;
-    --text:#eef2ff;
-    --muted:#91a0bb;
-    --blue:#5b8cff;
-    --green:#16c784;
-    --amber:#f5b942;
-    --red:#ff5d6c;
+  --bg:#070b14;
+  --panel:#0e1525;
+  --panel-2:#121b2e;
+  --border:#24304a;
+  --text:#eef2ff;
+  --muted:#91a0bb;
+  --blue:#5b8cff;
+  --green:#16c784;
+  --amber:#f5b942;
+  --red:#ff5d6c;
+  --shadow:0 18px 55px rgba(0,0,0,.35);
 }
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
 body{
-    margin:0;
-    min-height:100vh;
-    background:
-        radial-gradient(900px 450px at 50% -10%,rgba(91,140,255,.18),transparent 60%),
-        radial-gradient(700px 400px at 100% 20%,rgba(22,199,132,.08),transparent 60%),
-        var(--bg);
-    color:var(--text);
-    font-family:Inter,Arial,sans-serif;
-    padding:14px;
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(1000px 450px at 50% -10%,rgba(91,140,255,.18),transparent 60%),
+    radial-gradient(700px 400px at 100% 20%,rgba(22,199,132,.08),transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,sans-serif;
+  padding:14px 14px 34px;
 }
-
-button,input{
-    font:inherit;
-}
-
-button{
-    border:0;
-    cursor:pointer;
-}
-
-button:active{
-    transform:scale(.97);
-}
-
-.app{
-    max-width:1180px;
-    margin:auto;
-}
-
-/* HEADER */
-
+button,input{font:inherit}
+button{border:0;cursor:pointer}
+button:active{transform:scale(.97)}
+.app{max-width:1180px;margin:auto}
 .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:12px;
-    margin:5px 0 16px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  margin:4px 0 16px;
 }
-
-.brand h1{
-    margin:0;
-    font-size:clamp(1.8rem,5vw,2.7rem);
-    font-weight:900;
-    letter-spacing:-1.5px;
+.brand h1{margin:0;font-size:clamp(1.7rem,5vw,2.7rem);font-weight:900;letter-spacing:-1.6px}
+.brand p{margin:5px 0 0;color:var(--muted);font-size:.8rem;font-weight:600}
+.icon-btn,.ghost-btn,.primary-btn,.danger-btn,.green-btn{
+  border-radius:13px;padding:11px 14px;font-weight:800;color:var(--text);
+  background:var(--panel-2);border:1px solid var(--border);
 }
-
-.brand p{
-    margin:5px 0 0;
-    color:var(--muted);
-    font-size:.78rem;
-    font-weight:600;
-}
-
-/* COMMON BUTTONS */
-
-.ghost-btn,
-.primary-btn,
-.tool-btn{
-    padding:11px 14px;
-    border-radius:13px;
-    font-weight:800;
-}
-
-.ghost-btn,
-.tool-btn{
-    background:var(--panel2);
-    color:var(--text);
-    border:1px solid var(--border);
-}
-
-.primary-btn{
-    background:var(--blue);
-    color:white;
-}
-
-/* DATE */
-
+.primary-btn{background:var(--blue);border-color:transparent}
+.green-btn{background:var(--green);border-color:transparent}
+.danger-btn{background:#3a151c;border-color:#65212c;color:#ffb9c1}
 .date-card{
-    background:
-        linear-gradient(
-            135deg,
-            rgba(91,140,255,.13),
-            rgba(22,199,132,.08)
-        );
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:14px;
-    display:grid;
-    grid-template-columns:1fr auto;
-    gap:10px;
-    margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(91,140,255,.13),rgba(22,199,132,.08));
+  border:1px solid var(--border);border-radius:20px;padding:14px;
+  display:grid;grid-template-columns:1fr auto;gap:10px;box-shadow:var(--shadow);
+  margin-bottom:12px;
 }
-
-.date-meta small{
-    display:block;
-    color:var(--muted);
-    font-size:.65rem;
-    font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-}
-
-.date-meta strong{
-    display:block;
-    margin-top:4px;
-    font-size:1rem;
-}
-
+.date-meta small{display:block;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:.65rem;letter-spacing:.08em}
+.date-meta strong{display:block;margin-top:4px;font-size:1rem}
+.date-actions{display:flex;gap:8px;align-items:center}
 .date-input{
-    width:100%;
-    margin-top:9px;
-    background:#0b1120;
-    color:white;
-    border:1px solid var(--border);
-    border-radius:11px;
-    padding:10px;
-    outline:none;
+  width:100%;margin-top:9px;background:#0b1120;color:var(--text);border:1px solid var(--border);
+  border-radius:11px;padding:10px 11px;outline:none;
 }
-
-.date-input:focus{
-    border-color:var(--blue);
-}
-
-.date-actions{
-    display:flex;
-    gap:8px;
-    align-items:center;
-}
-
-/* TOOLBAR */
-
+.date-input:focus{border-color:var(--blue)}
 .toolbar{
-    display:grid;
-    grid-template-columns:minmax(160px,1fr) repeat(6,auto);
-    gap:8px;
-    margin-bottom:10px;
+  display:grid;grid-template-columns:minmax(150px,1fr) repeat(6,auto);gap:8px;
+  margin-bottom:9px;
 }
-
 .input{
-    width:100%;
-    background:var(--panel);
-    border:1px solid var(--border);
-    color:white;
-    border-radius:12px;
-    padding:11px 12px;
-    outline:none;
-    font-weight:700;
+  width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:12px;padding:11px 12px;outline:none;font-weight:700;
 }
-
-.input:focus{
-    border-color:var(--blue);
+.input:focus{border-color:var(--blue)}
+.tool-btn{
+  background:var(--panel);color:var(--text);border:1px solid var(--border);
+  border-radius:12px;padding:11px 12px;font-weight:800;
 }
-
-.tool-btn.blue{
-    background:var(--blue);
-    border-color:transparent;
-}
-
-.tool-btn.red{
-    background:#3a151c;
-    border-color:#65212c;
-    color:#ffb9c1;
-}
-
+.tool-btn.blue{background:var(--blue);border-color:transparent}
+.tool-btn.green{background:var(--green);border-color:transparent}
+.tool-btn.red{background:#3a151c;border-color:#65212c;color:#ffb9c1}
 .mode-note{
-    display:none;
-    margin-bottom:10px;
-    padding:10px 12px;
-    border-radius:12px;
-    background:rgba(91,140,255,.1);
-    border:1px solid rgba(91,140,255,.3);
-    color:#bcd0ff;
-    font-size:.78rem;
-    font-weight:700;
+  display:none;margin-bottom:10px;padding:10px 12px;border-radius:12px;
+  background:rgba(91,140,255,.10);border:1px solid rgba(91,140,255,.3);color:#bcd0ff;font-size:.78rem;font-weight:700;
 }
-
-.mode-note.show{
-    display:block;
-}
-
-/* STATISTICS */
-
+.mode-note.show{display:block}
 .stats{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:8px;
-    margin-bottom:12px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;
 }
-
 .stat{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:15px;
-    padding:11px;
-    text-align:center;
+  background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:11px;text-align:center;
 }
-
-.stat b{
-    display:block;
-    font-size:1.3rem;
-}
-
-.stat span{
-    display:block;
-    margin-top:3px;
-    font-size:.62rem;
-    color:var(--muted);
-    text-transform:uppercase;
-    font-weight:800;
-}
-
-.stat.full b{
-    color:#4ee6a2;
-}
-
-.stat.partial b{
-    color:#ffd06b;
-}
-
-.stat.missing b{
-    color:#ff8791;
-}
-
-.stat.ticked b{
-    color:#8db0ff;
-}
-
-/* THALAM GRID */
-
+.stat b{display:block;font-size:1.3rem}
+.stat span{display:block;margin-top:3px;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.stat.full b{color:#4ee6a2}.stat.partial b{color:#ffd06b}.stat.missing b{color:#ff8791}.stat.total b{color:#dfe7ff}.stat.ticked b{color:#8db0ff}
 .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
-    gap:10px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;
 }
-
 .card{
-    position:relative;
-    min-height:150px;
-    background:linear-gradient(180deg,#101827,#0c1422);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:16px 10px 12px;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    box-shadow:0 7px 25px rgba(0,0,0,.16);
-    transition:.2s;
+  position:relative;min-height:150px;background:linear-gradient(180deg,#101827,#0c1422);
+  border:1px solid var(--border);border-radius:18px;padding:16px 10px 12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 7px 25px rgba(0,0,0,.16);
 }
-
-.card:hover{
-    transform:translateY(-2px);
-}
-
-.card.selected{
-    border-color:var(--blue);
-    box-shadow:
-        0 0 0 2px rgba(91,140,255,.12),
-        0 12px 30px rgba(0,0,0,.25);
-}
-
-.card-num{
-    font-size:1.65rem;
-    font-weight:900;
-    margin-bottom:7px;
-}
-
-.card-status{
-    font-size:.63rem;
-    font-weight:800;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:10px;
-}
-
-.sides{
-    display:flex;
-    gap:8px;
-}
-
+.card.selected{border-color:var(--blue);box-shadow:0 0 0 2px rgba(91,140,255,.12),0 12px 30px rgba(0,0,0,.25)}
+.card-num{font-size:1.65rem;font-weight:900;margin-bottom:13px}
+.card-status{font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:9px}
+.sides{display:flex;gap:8px}
 .side{
-    width:54px;
-    height:48px;
-    border-radius:12px;
-    font-weight:900;
-    color:#a6b1c8;
-    background:#202b3f;
-    border:1px solid #34425d;
+  width:54px;height:48px;border-radius:12px;font-weight:900;color:#a6b1c8;
+  background:#202b3f;border:1px solid #34425d;
 }
-
-.side.on{
-    color:white;
-    background:var(--green);
-    border-color:transparent;
-    box-shadow:0 0 16px rgba(22,199,132,.22);
-}
-
-/* REMOVE BUTTON */
-
+.side.on{color:#fff;background:var(--green);border-color:transparent;box-shadow:0 0 16px rgba(22,199,132,.22)}
 .remove{
-    position:absolute;
-    top:7px;
-    right:7px;
-
-    width:32px;
-    height:32px;
-
-    border-radius:10px;
-
-    background:#3a151c;
-    border:1px solid #65212c;
-    color:#ff7e8a;
-
-    display:none;
-    align-items:center;
-    justify-content:center;
-
-    font-size:20px;
-    font-weight:900;
+  position:absolute;top:7px;right:7px;width:32px;height:32px;border-radius:10px;
+  background:#3a151c;border:1px solid #65212c;color:#ff7e8a;display:none;font-size:20px;font-weight:900;
 }
+.card.selected .remove{display:flex;align-items:center;justify-content:center}
+.card.editing .remove{display:flex}
+.bottom-hint{text-align:center;color:var(--muted);font-size:.72rem;margin:14px 0 0}
 
-.card.selected .remove,
-.card.editing .remove{
-    display:flex;
-}
-
-/* HINT */
-
-.bottom-hint{
-    text-align:center;
-    color:var(--muted);
-    font-size:.72rem;
-    margin:14px 0;
-}
-
-/* MODALS */
-
+/* modal / report */
 .overlay{
-    position:fixed;
-    inset:0;
-
-    background:rgba(1,4,10,.72);
-    backdrop-filter:blur(8px);
-
-    display:none;
-
-    z-index:1000;
-
-    padding:14px;
-    overflow:auto;
+  position:fixed;inset:0;background:rgba(1,4,10,.72);backdrop-filter:blur(8px);
+  display:none;z-index:1000;padding:14px;overflow:auto;
 }
-
-.overlay.show{
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-}
-
+.overlay.show{display:flex;align-items:flex-start;justify-content:center}
 .modal{
-    width:min(100%,980px);
-    margin:2vh auto;
-
-    background:white;
-    color:#0d1422;
-
-    border-radius:22px;
-
-    box-shadow:0 25px 90px rgba(0,0,0,.5);
-    overflow:hidden;
+  width:min(100%,980px);margin:2vh auto;background:#fff;color:#0d1422;border-radius:22px;box-shadow:0 25px 90px rgba(0,0,0,.5);
+  overflow:hidden;
 }
-
 .modal-head{
-    padding:18px;
-    border-bottom:1px solid #e6ebf2;
-
-    display:flex;
-    justify-content:space-between;
-    gap:14px;
-    align-items:flex-start;
+  padding:18px 18px 14px;border-bottom:1px solid #e6ebf2;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
 }
+.modal-head h2{margin:0;font-size:1.35rem;font-weight:900}
+.modal-head p{margin:4px 0 0;color:#69758a;font-size:.78rem;font-weight:700}
+.close{background:#eef2f7;color:#0d1422;width:38px;height:38px;border-radius:11px;font-size:20px;font-weight:900}
+.modal-body{padding:16px}
+.report-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.report-actions button{border-radius:11px;padding:12px;font-weight:800}
+.r-green{background:#16a34a;color:#fff}.r-blue{background:#2563eb;color:#fff}.r-dark{background:#0f172a;color:#fff}.r-light{background:#edf1f7;color:#101828}
+.report-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.rstat{background:#f5f7fb;border:1px solid #e4e9f1;border-radius:13px;padding:12px;text-align:center}
+.rstat b{display:block;font-size:1.25rem}.rstat span{display:block;margin-top:3px;font-size:.6rem;color:#6f7a8e;text-transform:uppercase;font-weight:800}
+.report-section{border:1px solid #e4e9f1;border-radius:15px;padding:14px;margin-bottom:12px}
+.report-title{margin:0 0 11px;font-size:.95rem;font-weight:900}
+.report-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px}
+.report-item{padding:9px 10px;border-radius:9px;font-size:.76rem;font-weight:800}
+.report-item.red{background:#fff0f2;color:#b4232f;border-left:4px solid #dc3647}
+.report-item.amber{background:#fff8e7;color:#a06100;border-left:4px solid #e8a923}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px}
+.detail{border:1px solid #e4e9f1;border-radius:10px;padding:10px;background:#fff}
+.detail strong{display:block;font-size:.83rem;margin-bottom:7px}
+.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{padding:4px 6px;border-radius:6px;font-size:.62rem;font-weight:900}
+.tag.green{background:#e7f8ef;color:#0e8a55}.tag.red{background:#ffebee;color:#b4232f}.tag.blue{background:#e8f0ff;color:#2458c5}
+.empty{padding:15px;border:1px dashed #cfd7e5;border-radius:10px;color:#69758a;text-align:center;font-weight:700;font-size:.78rem}
 
-.modal-head h2{
-    margin:0;
-    font-size:1.35rem;
-    font-weight:900;
-}
-
-.modal-head p{
-    margin:4px 0 0;
-    color:#69758a;
-    font-size:.78rem;
-    font-weight:700;
-}
-
-.close{
-    background:#eef2f7;
-    color:#0d1422;
-
-    width:38px;
-    height:38px;
-
-    border-radius:11px;
-
-    font-size:20px;
-    font-weight:900;
-}
-
-.modal-body{
-    padding:16px;
-}
-
-/* REPORT BUTTONS */
-
-.report-actions{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-    margin-bottom:14px;
-}
-
-.report-actions button{
-    border-radius:11px;
-    padding:12px;
-    font-weight:800;
-}
-
-.r-green{
-    background:#16a34a;
-    color:white;
-}
-
-.r-blue{
-    background:#2563eb;
-    color:white;
-}
-
-.r-dark{
-    background:#0f172a;
-    color:white;
-}
-
-.r-light{
-    background:#edf1f7;
-    color:#101828;
-}
-
-/* REPORT STATS */
-
-.report-stats{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:8px;
-    margin-bottom:14px;
-}
-
-.rstat{
-    background:#f5f7fb;
-    border:1px solid #e4e9f1;
-    border-radius:13px;
-    padding:12px;
-    text-align:center;
-}
-
-.rstat b{
-    display:block;
-    font-size:1.25rem;
-}
-
-.rstat span{
-    display:block;
-    margin-top:3px;
-    font-size:.6rem;
-    color:#6f7a8e;
-    text-transform:uppercase;
-    font-weight:800;
-}
-
-/* REPORT SECTIONS */
-
-.report-section{
-    border:1px solid #e4e9f1;
-    border-radius:15px;
-    padding:14px;
-    margin-bottom:12px;
-}
-
-.report-title{
-    margin:0 0 11px;
-    font-size:.95rem;
-    font-weight:900;
-}
-
-.report-list{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:7px;
-}
-
-.report-item{
-    padding:9px 10px;
-    border-radius:9px;
-    font-size:.76rem;
-    font-weight:800;
-}
-
-.report-item.red{
-    background:#fff0f2;
-    color:#b4232f;
-    border-left:4px solid #dc3647;
-}
-
-.report-item.amber{
-    background:#fff8e7;
-    color:#a06100;
-    border-left:4px solid #e8a923;
-}
-
-/* DETAILS */
-
-.detail-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
-    gap:8px;
-}
-
-.detail{
-    border:1px solid #e4e9f1;
-    border-radius:10px;
-    padding:10px;
-    background:white;
-}
-
-.detail strong{
-    display:block;
-    font-size:.83rem;
-    margin-bottom:7px;
-}
-
-.tags{
-    display:flex;
-    gap:5px;
-    flex-wrap:wrap;
-}
-
-.tag{
-    padding:4px 6px;
-    border-radius:6px;
-    font-size:.62rem;
-    font-weight:900;
-}
-
-.tag.green{
-    background:#e7f8ef;
-    color:#0e8a55;
-}
-
-.tag.red{
-    background:#ffebee;
-    color:#b4232f;
-}
-
-.tag.blue{
-    background:#e8f0ff;
-    color:#2458c5;
-}
-
-.empty{
-    padding:15px;
-    border:1px dashed #cfd7e5;
-    border-radius:10px;
-    color:#69758a;
-    text-align:center;
-    font-weight:700;
-    font-size:.78rem;
-}
-
-/* HISTORY */
-
-.history-list{
-    display:grid;
-    gap:8px;
-}
-
+/* history */
+.history-list{display:grid;gap:8px}
 .history-row{
-    display:grid;
-    grid-template-columns:1fr auto auto;
-    gap:10px;
-    align-items:center;
-
-    padding:11px 12px;
-
-    border:1px solid #e4e9f1;
-    border-radius:11px;
-
-    background:white;
+  display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
+  padding:11px 12px;border:1px solid #e4e9f1;border-radius:11px;background:#fff;
 }
-
-.history-row strong{
-    font-size:.8rem;
-}
-
-.history-row span{
-    font-size:.65rem;
-    color:#6f7a8e;
-    font-weight:800;
-}
-
-.history-row button{
-    padding:7px 10px;
-    border-radius:9px;
-    background:#eef2f7;
-    font-weight:800;
-}
-
-/* TOAST */
-
+.history-row strong{font-size:.8rem}.history-row span{font-size:.65rem;color:#6f7a8e;font-weight:800}.history-row button{padding:7px 10px;border-radius:9px;background:#eef2f7;font-weight:800}
 .toast{
-    position:fixed;
-    left:50%;
-    bottom:18px;
-
-    transform:translateX(-50%) translateY(20px);
-
-    background:#101827;
-    color:white;
-
-    border:1px solid #2c3a55;
-
-    padding:10px 13px;
-    border-radius:11px;
-
-    font-size:.75rem;
-    font-weight:800;
-
-    opacity:0;
-    pointer-events:none;
-
-    transition:.25s;
-
-    z-index:3000;
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);
+  background:#101827;color:#fff;border:1px solid #2c3a55;padding:10px 13px;border-radius:11px;font-size:.75rem;font-weight:800;
+  opacity:0;pointer-events:none;transition:.25s;z-index:3000;box-shadow:var(--shadow)
 }
-
-.toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-}
-
-/* MOBILE */
-
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:900px){
-
-    .toolbar{
-        grid-template-columns:1fr 1fr 1fr;
-    }
-
-    .toolbar .input{
-        grid-column:1/-1;
-    }
-
-    .stats{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .report-actions{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .report-stats{
-        grid-template-columns:repeat(3,1fr);
-    }
+  .toolbar{grid-template-columns:1fr 1fr 1fr}
+  .toolbar .input{grid-column:1/-1}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .report-actions{grid-template-columns:1fr 1fr}
+  .report-stats{grid-template-columns:repeat(3,1fr)}
 }
-
 @media(max-width:540px){
-
-    body{
-        padding:10px;
-    }
-
-    .topbar{
-        align-items:center;
-    }
-
-    .date-card{
-        grid-template-columns:1fr;
-    }
-
-    .date-actions{
-        justify-content:flex-start;
-    }
-
-    .toolbar{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .toolbar .input{
-        grid-column:1/-1;
-    }
-
-    .grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .stats .stat:last-child{
-        grid-column:span 2;
-    }
-
-    .report-actions,
-    .report-stats{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .report-stats .rstat:last-child{
-        grid-column:span 2;
-    }
-
-    .detail-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .history-row{
-        grid-template-columns:1fr auto;
-    }
-
-    .history-row button:last-child{
-        grid-column:2;
-    }
+  body{padding:10px}
+  .topbar{align-items:center}
+  .topbar .ghost-btn{padding:9px 10px}
+  .date-card{grid-template-columns:1fr}
+  .date-actions{justify-content:flex-start}
+  .toolbar{grid-template-columns:1fr 1fr}
+  .toolbar .input{grid-column:1/-1}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stats .stat:last-child{grid-column:span 2}
+  .report-actions,.report-stats{grid-template-columns:1fr 1fr}
+  .report-stats .rstat:last-child{grid-column:span 2}
+  .report{border-radius:17px}
+  .modal-head{padding:14px}.modal-body{padding:12px}
+  .detail-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
-    <!-- HEADER -->
-
-    <div class="topbar">
-
-        <div class="brand">
-            <h1>Thalam Pro</h1>
-            <p>L / R attendance • Date history • Reports</p>
-        </div>
-
-        <button class="ghost-btn" id="historyBtn">
-            🗓 History
-        </button>
-
+  <div class="topbar">
+    <div class="brand">
+      <h1>Thalam Pro</h1>
+      <p>L / R attendance, date history & report management</p>
     </div>
+    <button class="ghost-btn" id="historyBtn">🗓 History</button>
+  </div>
 
-
-    <!-- DATE -->
-
-    <section class="date-card">
-
-        <div class="date-meta">
-
-            <small>Active attendance date</small>
-
-            <strong id="prettyDate">
-                Loading...
-            </strong>
-
-            <input
-                class="date-input"
-                type="date"
-                id="dateInput"
-            >
-
-        </div>
-
-        <div class="date-actions">
-
-            <button class="ghost-btn" id="todayBtn">
-                Today
-            </button>
-
-            <button class="primary-btn" id="reportBtn">
-                📋 Report
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- TOOLBAR -->
-
-    <div class="toolbar">
-
-        <input
-            class="input"
-            type="number"
-            id="numberInput"
-            inputmode="numeric"
-            min="1"
-            placeholder="Thalam number + Enter"
-        >
-
-        <button class="tool-btn blue" id="addBtn">
-            ＋ Add
-        </button>
-
-        <button class="tool-btn" id="editBtn">
-            ✏ Edit
-        </button>
-
-        <button class="tool-btn" id="setAllBtn">
-            ✓ Set all
-        </button>
-
-        <button class="tool-btn" id="clearSidesBtn">
-            ○ Clear
-        </button>
-
-        <button class="tool-btn" id="invertBtn">
-            ↺ Invert
-        </button>
-
-        <button class="tool-btn red" id="clearDayBtn">
-            Reset day
-        </button>
-
+  <section class="date-card">
+    <div class="date-meta">
+      <small>Active attendance date</small>
+      <strong id="prettyDate">Loading…</strong>
+      <input class="date-input" type="date" id="dateInput">
     </div>
-
-
-    <div class="mode-note" id="modeNote">
-        Edit mode is ON.
-        Tap a Thalam card to select it.
-        The red × button will appear for removing it.
+    <div class="date-actions">
+      <button class="ghost-btn" id="todayBtn">Today</button>
+      <button class="primary-btn" id="reportBtn">Report</button>
     </div>
+  </section>
 
+  <div class="toolbar">
+    <input class="input" type="number" id="numberInput" inputmode="numeric" min="1" placeholder="Thalam number — Enter to toggle/add">
+    <button class="tool-btn blue" id="addBtn">＋ Add</button>
+    <button class="tool-btn" id="editBtn">✏ Edit</button>
+    <button class="tool-btn" id="setAllBtn">✓ Set all</button>
+    <button class="tool-btn" id="clearSidesBtn">○ Clear sides</button>
+    <button class="tool-btn" id="invertBtn">↺ Invert</button>
+    <button class="tool-btn red" id="clearDayBtn">Reset day</button>
+  </div>
 
-    <!-- STATISTICS -->
+  <div class="mode-note" id="modeNote">
+    Edit mode is ON. Tap a card to select it. Its red × button removes that Thalam from this date.
+  </div>
 
-    <div class="stats">
+  <div class="stats">
+    <div class="stat total"><b id="statTotal">0</b><span>Total</span></div>
+    <div class="stat full"><b id="statFull">0</b><span>Full sets</span></div>
+    <div class="stat partial"><b id="statPartial">0</b><span>Partial</span></div>
+    <div class="stat missing"><b id="statMissing">0</b><span>Full missing</span></div>
+    <div class="stat ticked"><b id="statTicked">0</b><span>At least one side</span></div>
+  </div>
 
-        <div class="stat">
-            <b id="statTotal">0</b>
-            <span>Total</span>
-        </div>
-
-        <div class="stat full">
-            <b id="statFull">0</b>
-            <span>Full sets</span>
-        </div>
-
-        <div class="stat partial">
-            <b id="statPartial">0</b>
-            <span>Partial</span>
-        </div>
-
-        <div class="stat missing">
-            <b id="statMissing">0</b>
-            <span>Full missing</span>
-        </div>
-
-        <div class="stat ticked">
-            <b id="statTicked">0</b>
-            <span>At least one side</span>
-        </div>
-
-    </div>
-
-
-    <!-- THALAM GRID -->
-
-    <div id="grid" class="grid"></div>
-
-    <div class="bottom-hint">
-        Tap L or R to change one side.
-        Tap the card to select it.
-        Data saves automatically for the selected date.
-    </div>
-
+  <div id="grid" class="grid"></div>
+  <div class="bottom-hint">Tap L or R to change one side. Tap the card to select it. Data saves automatically for the active date.</div>
 </div>
 
-
-<!-- =====================================================
-     REPORT MODAL
-===================================================== -->
-
-<div
-    class="overlay"
-    id="reportOverlay"
->
-
-    <div class="modal">
-
-        <div class="modal-head">
-
-            <div>
-
-                <h2>
-                    Thalam Attendance Report
-                </h2>
-
-                <p id="reportDateText"></p>
-
-            </div>
-
-            <button
-                class="close"
-                id="reportClose"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="modal-body">
-
-
-            <!-- REPORT ACTIONS -->
-
-            <div class="report-actions">
-
-                <button
-                    class="r-green"
-                    id="whatsappBtn"
-                >
-                    💬 WhatsApp
-                </button>
-
-                <button
-                    class="r-blue"
-                    id="copyBtn"
-                >
-                    📋 Copy
-                </button>
-
-                <button
-                    class="r-dark"
-                    id="downloadBtn"
-                >
-                    ⬇ Save TXT
-                </button>
-
-                <button
-                    class="r-light"
-                    id="printBtn"
-                >
-                    🖨 Print
-                </button>
-
-            </div>
-
-
-            <!-- REPORT STATS -->
-
-            <div class="report-stats">
-
-                <div class="rstat">
-                    <b id="rTotal">0</b>
-                    <span>Total</span>
-                </div>
-
-                <div class="rstat">
-                    <b id="rFull">0</b>
-                    <span>Full</span>
-                </div>
-
-                <div class="rstat">
-                    <b id="rPartial">0</b>
-                    <span>Partial</span>
-                </div>
-
-                <div class="rstat">
-                    <b id="rMissing">0</b>
-                    <span>Both missing</span>
-                </div>
-
-                <div class="rstat">
-                    <b id="rTicked">0</b>
-                    <span>Ticked</span>
-                </div>
-
-            </div>
-
-
-            <!-- FULL MISSING -->
-
-            <section class="report-section">
-
-                <h3 class="report-title">
-                    ❌ Full sets missing — L + R
-                </h3>
-
-                <div
-                    class="report-list"
-                    id="fullMissingReport"
-                ></div>
-
-            </section>
-
-
-            <!-- PARTIAL -->
-
-            <section class="report-section">
-
-                <h3 class="report-title">
-                    ⚠ Partial sides missing
-                </h3>
-
-                <div
-                    class="report-list"
-                    id="partialReport"
-                ></div>
-
-            </section>
-
-
-            <!-- EVERY THALAM -->
-
-            <section class="report-section">
-
-                <h3 class="report-title">
-                    📋 Every Thalam — complete L / R status
-                </h3>
-
-                <div
-                    class="detail-grid"
-                    id="detailReport"
-                ></div>
-
-            </section>
-
-        </div>
-
+<!-- REPORT MODAL -->
+<div class="overlay" id="reportOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Thalam Attendance Report</h2>
+        <p id="reportDateText"></p>
+      </div>
+      <button class="close" id="reportClose">×</button>
     </div>
+    <div class="modal-body">
+      <div class="report-actions">
+        <button class="r-green" id="whatsappBtn">💬 WhatsApp</button>
+        <button class="r-blue" id="copyBtn">📋 Copy</button>
+        <button class="r-dark" id="downloadBtn">⬇ Save TXT</button>
+        <button class="r-light" id="printBtn">🖨 Print</button>
+      </div>
 
+      <div class="report-stats">
+        <div class="rstat"><b id="rTotal">0</b><span>Total</span></div>
+        <div class="rstat"><b id="rFull">0</b><span>Full</span></div>
+        <div class="rstat"><b id="rPartial">0</b><span>Partial</span></div>
+        <div class="rstat"><b id="rMissing">0</b><span>Both missing</span></div>
+        <div class="rstat"><b id="rTicked">0</b><span>Ticked</span></div>
+      </div>
+
+      <section class="report-section">
+        <h3 class="report-title">❌ Full sets missing — L + R</h3>
+        <div class="report-list" id="fullMissingReport"></div>
+      </section>
+
+      <section class="report-section">
+        <h3 class="report-title">⚠ Partial sides missing</h3>
+        <div class="report-list" id="partialReport"></div>
+      </section>
+
+      <section class="report-section">
+        <h3 class="report-title">📋 Every Thalam — complete L / R status</h3>
+        <div class="detail-grid" id="detailReport"></div>
+      </section>
+    </div>
+  </div>
 </div>
 
-
-<!-- =====================================================
-     HISTORY MODAL
-===================================================== -->
-
-<div
-    class="overlay"
-    id="historyOverlay"
->
-
-    <div
-        class="modal"
-        style="max-width:780px"
-    >
-
-        <div class="modal-head">
-
-            <div>
-
-                <h2>
-                    Date History
-                </h2>
-
-                <p>
-                    Saved attendance days on this device
-                </p>
-
-            </div>
-
-            <button
-                class="close"
-                id="historyClose"
-            >
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div
-                class="history-list"
-                id="historyList"
-            ></div>
-
-        </div>
-
+<!-- HISTORY MODAL -->
+<div class="overlay" id="historyOverlay" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width:780px">
+    <div class="modal-head">
+      <div>
+        <h2>Date history</h2>
+        <p>Saved attendance days on this device</p>
+      </div>
+      <button class="close" id="historyClose">×</button>
     </div>
-
+    <div class="modal-body">
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
 </div>
 
-
-<!-- TOAST -->
-
-<div
-    class="toast"
-    id="toast"
-></div>
-
+<div class="toast" id="toast"></div>
 
 <script>
+(() => {
+  "use strict";
 
-"use strict";
+  const PHONE = "919952593464";
+  const PREFIX = "THALAM_PRO_V3_";
+  const defaultIds = [4, ...Array.from({length:13}, (_,i)=>i+10)];
 
-
-/* =====================================================
-   SETTINGS
-===================================================== */
-
-const PHONE = "919952593464";
-
-const STORAGE_PREFIX =
-    "THALAM_PRO_V3_";
-
-
-/*
-    Original default list:
-
-    4
-    10
-    11
-    12
-    ...
-    22
-*/
-
-const DEFAULT_IDS = [
-    4,
-    ...Array.from(
-        {length:13},
-        (_,i)=>i+10
-    )
-];
-
-
-/* =====================================================
-   APPLICATION STATE
-===================================================== */
-
-let state = {
-
+  let state = {
     date: todayKey(),
-
     items: [],
-
     editMode: false,
-
     selectedId: null
+  };
 
-};
+  const $ = id => document.getElementById(id);
 
-
-/* =====================================================
-   SHORT SELECTOR
-===================================================== */
-
-const $ = id =>
-    document.getElementById(id);
-
-
-/* =====================================================
-   TODAY DATE
-===================================================== */
-
-function todayKey(){
-
+  function todayKey(){
     const d = new Date();
-
     return [
-        d.getFullYear(),
-
-        String(
-            d.getMonth()+1
-        ).padStart(2,"0"),
-
-        String(
-            d.getDate()
-        ).padStart(2,"0")
-
+      d.getFullYear(),
+      String(d.getMonth()+1).padStart(2,"0"),
+      String(d.getDate()).padStart(2,"0")
     ].join("-");
+  }
 
-}
+  function pretty(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("en-IN", {
+      weekday:"long", year:"numeric", month:"long", day:"numeric"
+    });
+  }
 
+  function storageKey(date){ return PREFIX + date; }
 
-/* =====================================================
-   PRETTY DATE
-===================================================== */
+  function cleanItems(items){
+    const seen = new Set();
+    return (Array.isArray(items) ? items : [])
+      .map(x => ({
+        id:Number(x.id),
+        L:Boolean(x.L),
+        R:Boolean(x.R)
+      }))
+      .filter(x => Number.isInteger(x.id) && x.id > 0)
+      .filter(x => {
+        if(seen.has(x.id)) return false;
+        seen.add(x.id);
+        return true;
+      })
+      .sort((a,b)=>a.id-b.id);
+  }
 
-function pretty(dateStr){
+  function makeDefault(){
+    return defaultIds.map(id => ({id,L:false,R:false}));
+  }
 
-    const d =
-        new Date(
-            dateStr + "T00:00:00"
-      
+  function save(){
+    localStorage.setItem(storageKey(state.date), JSON.stringify(cleanItems(state.items)));
+  }
+
+  function load(date){
+    state.date = date;
+    state.selectedId = null;
+    const raw = localStorage.getItem(storageKey(date));
+    if(raw){
+      try{
+        state.items = cleanItems(JSON.parse(raw));
+      }catch{
+        state.items = makeDefault();
+      }
+    }else{
+      state.items = makeDefault();
+    }
+    $("dateInput").value = state.date;
+    $("prettyDate").textContent = pretty(state.date);
+    render();
+  }
+
+  function toast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(window.__toast);
+    window.__toast = setTimeout(()=>t.classList.remove("show"), 1800);
+  }
+
+  function stats(){
+    let full=0, partial=0, missing=0, ticked=0;
+    state.items.forEach(x=>{
+      if(x.L || x.R) ticked++;
+      if(x.L && x.R) full++;
+      else if(!x.L && !x.R) missing++;
+      else partial++;
+    });
+    return {total:state.items.length,full,partial,missing,ticked};
+  }
+
+  function statusLabel(item){
+    if(item.L && item.R) return "Full set";
+    if(!item.L && !item.R) return "L + R missing";
+    return item.L ? "R missing" : "L missing";
+  }
+
+  function render(){
+    const grid = $("grid");
+    grid.innerHTML = "";
+
+    state.items.forEach(item=>{
+      const card = document.createElement("article");
+      card.className = "card" + (state.selectedId===item.id ? " selected" : "") + (state.editMode ? " editing" : "");
+      card.dataset.id = item.id;
+
+      const remove = document.createElement("button");
+      remove.className = "remove";
+      remove.type = "button";
+      remove.setAttribute("aria-label","Remove Thalam " + item.id);
+      remove.textContent = "×";
+      remove.onclick = e => {
+        e.stopPropagation();
+        removeItem(item.id);
+      };
+
+      const num = document.createElement("div");
+      num.className = "card-num";
+      num.textContent = item.id;
+
+      const label = document.createElement("div");
+      label.className = "card-status";
+      label.textContent = statusLabel(item);
+
+      const sides = document.createElement("div");
+      sides.className = "sides";
+
+      const left = document.createElement("button");
+      left.type = "button";
+      left.className = "side " + (item.L ? "on" : "");
+      left.textContent = "L";
+      left.setAttribute("aria-label", "Left side Thalam " + item.id);
+      left.onclick = e => {
+        e.stopPropagation();
+        item.L = !item.L;
+        save();
+        render();
+      };
+
+      const right = document.createElement("button");
+      right.type = "button";
+      right.className = "side " + (item.R ? "on" : "");
+      right.textContent = "R";
+      right.setAttribute("aria-label", "Right side Thalam " + item.id);
+      right.onclick = e => {
+        e.stopPropagation();
+        item.R = !item.R;
+        save();
+        render();
+      };
+
+      sides.append(left,right);
+      card.append(remove,num,label,sides);
+
+      card.onclick = () => {
+        state.selectedId = state.selectedId===item.id ? null : item.id;
+        render();
+      };
+
+      grid.appendChild(card);
+    });
+
+    const s = stats();
+    $("statTotal").textContent = s.total;
+    $("statFull").textContent = s.full;
+    $("statPartial").textContent = s.partial;
+    $("statMissing").textContent = s.missing;
+    $("statTicked").textContent = s.ticked;
+
+    $("editBtn").textContent = state.editMode ? "✓ Done" : "✏ Edit";
+    $("modeNote").classList.toggle("show", state.editMode);
+  }
+
+  function addOrToggleFromInput(){
+    const input = $("numberInput");
+    const id = Number(input.value);
+    if(!Number.isInteger(id) || id<1){
+      toast("Enter a valid Thalam number");
+      input.focus();
+      return;
+    }
+
+    const found = state.items.find(x=>x.id===id);
+    if(found){
+      const complete = found.L && found.R;
+      found.L = !complete;
+      found.R = !complete;
+      state.selectedId = id;
+      save();
+      render();
+      toast(complete ? `Thalam ${id} cleared` : `Thalam ${id} set fully`);
+    }else{
+      state.items.push({id,L:false,R:false});
+      state.items.sort((a,b)=>a.id-b.id);
+      state.selectedId = id;
+      save();
+      render();
+      toast(`Thalam ${id} added`);
+    }
+    input.value = "";
+  }
+
+ function addItem(){
+    const input = $("numberInput");
+    const id = Number(input.value);
+    if(!Number.isInteger(id) || id<1){
+      toast("Enter a valid Thalam number");
+      input.focus();
+      return;
+    }
+    if(state.items.some(x=>x.id===id)){
+      state.selectedId = id;
+      render();
+      toast(`Thalam ${id} already exists`);
+      input.value = "";
+      return;
+    }
+    state.items.push({id,L:false,R:false});
+    state.items.sort((a,b)=>a.id-b.id);
+    state.selectedId = id;
+    save();
+    render();
+    input.value = "";
+    toast(`Thalam ${id} added`);
+  }
+
+  function removeItem(id){
+    const index = state.items.findIndex(x=>x.id===id);
+    if(index<0) return;
+    const ok = confirm(`Remove Thalam ${id} from ${pretty(state.date)}?`);
+    if(!ok) return;
+    state.items.splice(index,1);
+    if(state.selectedId===id) state.selectedId=null;
+    save();
+    render();
+    toast(`Thalam ${id} removed`);
+  }
+
+  function setAll(){
+    state.items.forEach(x=>{x.L=true;x.R=true});
+    save();render();toast("All Thalams marked full");
+  }
+
+  function clearSides(){
+    if(!confirm(`Clear L and R for every Thalam on ${pretty(state.date)}?`)) return;
+    state.items.forEach(x=>{x.L=false;x.R=false});
+    save();render();toast("All sides cleared");
+  }
+
+  function invert(){
+    state.items.forEach(x=>{x.L=!x.L;x.R=!x.R});
+    save();render();toast("All L/R states inverted");
+  }
+
+  function resetDay(){
+    if(!confirm(`Reset ${pretty(state.date)} to the default Thalam list with all sides missing?`)) return;
+    state.items = makeDefault();
+    state.selectedId = null;
+    save();render();toast("Day reset to default");
+  }
+
+  function toggleEdit(){
+    state.editMode = !state.editMode;
+    if(!state.editMode) state.selectedId=null;
+    render();
+  }
+
+  function buildReport(){
+    const s=stats();
+    const full=state.items.filter(x=>x.L&&x.R);
+    const bothMissing=state.items.filter(x=>!x.L&&!x.R);
+    const partial=state.items.filter(x=>(x.L&&!x.R)||(!x.L&&x.R));
+
+    let out = "";
+    out += "THALAM ATTENDANCE REPORT\n";
+    out += "========================\n";
+    out += `DATE: ${pretty(state.date)}\n\n`;
+    out += `TOTAL: ${s.total}\n`;
+    out += `FULL SETS: ${s.full}\n`;
+    out += `PARTIAL: ${s.partial}\n`;
+    out += `FULL SETS MISSING: ${s.missing}\n`;
+    out += `AT LEAST ONE SIDE PRESENT: ${s.ticked}\n\n`;
+
+    out += "FULL SETS (L + R PRESENT)\n";
+    out += "-------------------------\n";
+    out += full.length ? full.map(x=>`Thalam ${x.id}`).join("\n") : "None";
+    out += "\n\n";
+
+    out += "FULL SETS MISSING (L + R)\n";
+    out += "--------------------------\n";
+    out += bothMissing.length ? bothMissing.map(x=>`Thalam ${x.id}`).join("\n") : "None";
+    out += "\n\n";
+
+    out += "PARTIAL / SIDE MISSING\n";
+    out += "----------------------\n";
+    out += partial.length ? partial.map(x=>{
+      const missing=[];
+      if(!x.L) missing.push("L");
+      if(!x.R) missing.push("R");
+      return `Thalam ${x.id} - Missing: ${missing.join(" + ")}`;
+    }).join("\n") : "None";
+    out += "\n\n";
+
+    out += "COMPLETE L / R STATUS\n";
+    out += "---------------------\n";
+    out += state.items.length ? state.items.map(x =>
+      `Thalam ${x.id} - L: ${x.L ? "Present" : "Missing"} | R: ${x.R ? "Present" : "Missing"}`
+    ).join("\n") : "No Thalams";
+    return out;
+  }
+
+  function openReport(){
+    renderReport();
+    $("reportOverlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+
+  function closeReport(){
+    $("reportOverlay").classList.remove("show");
+    document.body.style.overflow="";
+  }
+
+  function renderReport(){
+    const s=stats();
+    $("reportDateText").textContent=pretty(state.date);
+    $("rTotal").textContent=s.total;
+    $("rFull").textContent=s.full;
+    $("rPartial").textContent=s.partial;
+    $("rMissing").textContent=s.missing;
+    $("rTicked").textContent=s.ticked;
+
+    const fullMissing=$("fullMissingReport");
+    const partial=$("partialReport");
+    const details=$("detailReport");
+    fullMissing.innerHTML="";
+    partial.innerHTML="";
+    details.innerHTML="";
+
+    const none=state.items.filter(x=>!x.L&&!x.R);
+    const part=state.items.filter(x=>(x.L&&!x.R)||(!x.L&&x.R));
+
+    if(!none.length){
+      fullMissing.innerHTML='<div class="empty">No completely missing Thalam sets.</div>';
+    }else{
+      none.forEach(x=>{
+        const div=document.createElement("div");
+        div.className="report-item red";
+        div.textContent=`Thalam ${x.id} — L + R missing`;
+        fullMissing.appendChild(div);
+      });
+    }
+
+    if(!part.length){
+      partial.innerHTML='<div class="empty">No partial Thalams.</div>';
+    }else{
+      part.forEach(x=>{
+        const missing=[];
+        if(!x.L) missing.push("L");
+        if(!x.R) missing.push("R");
+        const div=document.createElement("div");
+        div.className="report-item amber";
+        div.textContent=`Thalam ${x.id} — Missing: ${missing.join(" + ")}`;
+        partial.appendChild(div);
+      });
+    }
+
+    state.items.forEach(x=>{
+      const div=document.createElement("div");
+      div.className="detail";
+      const name=document.createElement("strong");
+      name.textContent=`Thalam ${x.id}`;
+      const tags=document.createElement("div");
+      tags.className="tags";
+
+      const l=document.createElement("span");
+      l.className="tag "+(x.L?"green":"red");
+      l.textContent=x.L?"L ✓ Present":"L ✕ Missing";
+
+      const r=document.createElement("span");
+      r.className="tag "+(x.R?"green":"red");
+      r.textContent=x.R?"R ✓ Present":"R ✕ Missing";
+
+      if(x.L&&x.R){
+        const f=document.createElement("span");
+        f.className="tag blue";
+        f.textContent="FULL";
+        tags.append(f);
+      }
+      tags.append(l,r);
+      div.append(name,tags);
+      details.append(div);
+    });
+  }
+
+  async function copyReport(){
+    const text=buildReport();
+    try{
+      await navigator.clipboard.writeText(text);
+      toast("Report copied");
+    }catch{
+      const ta=document.createElement("textarea");
+      ta.value=text; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      toast("Report copied");
+    }
+  }
+
+  function downloadReport(){
+    const blob=new Blob([buildReport()],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=`Thalam_Report_${state.date}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Report saved");
+  }
+
+  function printReport(){
+    const text=buildReport().replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const w=window.open("","_blank");
+    if(!w){toast("Pop-up blocked");return}
+    w.document.write(`<html><head><title>Thalam Report - ${state.date}</title><style>body{font-family:Arial,sans-serif;padding:30px;line-height:1.5}pre{white-space:pre-wrap;font:14px Arial}</style></head><body><h1>Thalam Attendance Report</h1><pre>${text}</pre></body></html>`);
+    w.document.close();w.focus();w.print();
+  }
+
+  function whatsapp(){
+    const url=`https://wa.me/${PHONE}?text=${encodeURIComponent(buildReport())}`;
+    window.open(url,"_blank","noopener");
+  }
+
+  function openHistory(){
+    const list=$("historyList");
+    list.innerHTML="";
+    const entries=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith(PREFIX)){
+        const date=k.slice(PREFIX.length);
+        try{
+          const items=cleanItems(JSON.parse(localStorage.getItem(k)));
+          entries.push({date,items});
+        }catch{}
+      }
+    }
+    entries.sort((a,b)=>b.date.localeCompare(a.date));
+    if(!entries.length){
+      list.innerHTML='<div class="empty">No saved dates yet.</div>';
+    }else{
+      entries.forEach(e=>{
+        const s = (() => {
+          let full=0,partial=0,missing=0;
+          e.items.forEach(x=>{
+            if(x.L&&x.R)full++;
+            else if(!x.L&&!x.R)missing++;
+            else partial++;
+          });
+          return {full,partial,missing};
+        })();
+        const row=document.createElement("div");
+        row.className="history-row";
+        const info=document.createElement("div");
+        info.innerHTML=`<strong>${pretty(e.date)}</strong><br><span>${e.items.length} Thalams • ${s.full} full • ${s.partial} partial • ${s.missing} missing</span>`;
+        const loadBtn=document.createElement("button");
+        loadBtn.textContent="Open";
+        loadBtn.onclick=()=>{load(e.date);closeHistory()};
+        const deleteBtn=document.createElement("button");
+        deleteBtn.textContent="Delete";
+        deleteBtn.onclick=()=>{
+          if(confirm(`Delete saved data for ${pretty(e.date)}?`)){
+            localStorage.removeItem(storageKey(e.date));
+            openHistory();
+            if(state.date===e.date) load(todayKey());
+            toast("Saved date deleted");
+          }
+        };
+        row.append(info,loadBtn,deleteBtn);
+        list.append(row);
+      });
+    }
+    $("historyOverlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+
+  function closeHistory(){
+    $("historyOverlay").classList.remove("show");
+    document.body.style.overflow="";
+  }
+
+  $("numberInput").addEventListener("keydown",e=>{
+    if(e.key==="Enter") addOrToggleFromInput();
+  });
+  $("addBtn").onclick=addItem;
+  $("editBtn").onclick=toggleEdit;
+  $("setAllBtn").onclick=setAll;
+  $("clearSidesBtn").onclick=clearSides;
+  $("invertBtn").onclick=invert;
+  $("clearDayBtn").onclick=resetDay;
+  $("dateInput").onchange=e=>load(e.target.value || todayKey());
+  $("todayBtn").onclick=()=>load(todayKey());
+  $("reportBtn").onclick=openReport;
+  $("reportClose").onclick=closeReport;
+  $("whatsappBtn").onclick=whatsapp;
+  $("copyBtn").onclick=copyReport;
+  $("downloadBtn").onclick=downloadReport;
+  $("printBtn").onclick=printReport;
+  $("historyBtn").onclick=openHistory;
+  $("historyClose").onclick=closeHistory;
+
+  $("reportOverlay").addEventListener("click",e=>{
+    if(e.target.id==="reportOverlay") closeReport();
+  });
+  $("historyOverlay").addEventListener("click",e=>{
+    if(e.target.id==="historyOverlay") closeHistory();
+  });
+  window.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      closeReport();
+      closeHistory();
+    }
+  });
+
+  /* Always start from today's real local date. */
+  load(todayKey());
+})();
+</script>
+</body>
+</html>
